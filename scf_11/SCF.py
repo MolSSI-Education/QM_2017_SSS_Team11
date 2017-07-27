@@ -5,9 +5,11 @@ import psi4
 try:
     from . import params
     from . import diis
+    from . import jk
 except SystemError:
     import params
     import diis
+    import jk
 
 np.set_printoptions(suppress=True, precision=4)
 
@@ -38,15 +40,18 @@ def diag(F, A):
     return eps, C
 
 
-def make_J(g, D, JK_mode):
+def make_JK(g, Cocc, JK_mode):
     '''
-    Function to make Coulomb matrix J from two-electron integrals g
+    Function to make Coulomb matrix J and Exchange matrix K from two-electron integrals g
     and density D, with flag JK_mode
     '''
-
+    if JK_mode:
+        J, K = jk.make_JK_adv(g, Cocc)
     if not JK_mode:
+        D = Cocc @ Cocc.T
         J = np.einsum("pqrs,rs->pq", g, D)
-    return J
+        K = np.einsum("prqs,rs->pq", g, D)
+    return J, K
 
 
 def make_K(g, D, JK_mode):
@@ -106,8 +111,8 @@ def scf(mints, e_conv, d_conv, nel, JK_mode, DIIS_mode, damp_start,
 
     for iteration in range(30):
         # Form J and K
-        J = make_J(g, D, JK_mode)
-        K = make_K(g, D, JK_mode)
+        J, K = make_JK(g, Cocc, JK_mode)
+#        K = make_K(g, Cocc, JK_mode)
 
         # Form new Fock matrix
         F_new = H + 2.0 * J - K
