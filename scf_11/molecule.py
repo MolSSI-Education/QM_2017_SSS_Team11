@@ -1,9 +1,19 @@
+
+
 import psi4
 import numpy as np
 
 class Molecule:
+    '''
+    A molecule class that is used to store basic parameters and
+    atomic orbitals/density matrices
+    '''
 
     def __init__(self, mol=None, bas=None, nel=0):
+        '''
+        Initialize molecule with geometry mol, basis
+        set bas and number of occupied orbitals nel
+        '''
         self.mol = mol
         self.bas = bas
         self.nel = nel
@@ -16,10 +26,17 @@ class Molecule:
         self.ao_eri = None
 
     def set_geometry(self, geom_str):
+        '''
+        set the geometry of the molecule by providing
+        a psi4 style string
+        '''
         self.mol = psi4.geometry(geom_str)
         self.mol.update_geometry()
 
     def set_basis(bas_str):
+        '''
+        set the basis set that is used in any further calculations
+        '''
         if(self.mol is None):
             raise Exception('Error: Geometry not defined')
         else:
