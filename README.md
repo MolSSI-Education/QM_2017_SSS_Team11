@@ -17,3 +17,9 @@ SCF:
 
 MP2:
 * Spin-component scaled (SCS-MP2)
+
+
+
+Projects in-progress or experimented with include:
+* C++ bound to the python side
+* Parallelization of C++ code using OpenMP
